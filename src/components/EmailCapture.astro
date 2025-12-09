@@ -1,0 +1,180 @@
+---
+// Email capture component for 11:34 waitlist
+---
+
+<div class="email-capture-container">
+  <form id="email-form">
+    <div class="input-wrapper">
+      <input
+        type="email"
+        id="email-input"
+        name="email"
+        placeholder="Email address"
+        required
+      />
+    </div>
+    
+    <button
+      type="submit"
+      id="submit-btn"
+    >
+     Register for updates
+    </button>
+
+    <div id="message-container" class="message-container hidden">
+      <!-- Success/error messages will appear here -->
+    </div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('email-form') as HTMLFormElement;
+  const emailInput = document.getElementById('email-input') as HTMLInputElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const messageContainer = document.getElementById('message-container') as HTMLDivElement;
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function showMessage(message: string, isError: boolean = false) {
+    messageContainer.textContent = message;
+    messageContainer.className = `message-container ${isError ? 'error' : 'success'}`;
+  }
+
+  function hideMessage() {
+    messageContainer.className = 'message-container hidden';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessage();
+
+    const email = emailInput.value.trim();
+
+    // Client-side validation
+    if (!email) {
+      showMessage('Enter email', true);
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      showMessage('Invalid', true);
+      return;
+    }
+
+    // Disable form during submission
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Please wait.';
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showMessage(data.message || 'Successfully joined the waitlist!', false);
+        emailInput.value = '';
+      } else {
+        showMessage(data.error || 'Something went wrong. Please try again.', true);
+      }
+    } catch (error) {
+      showMessage('Network error. Please check your connection and try again.', true);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the Waitlist';
+    }
+  });
+</script>
+
+<style>
+  .email-capture-container {
+    width: 100%;
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  input[type="email"] {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: #ffffff;
+    border: 2px solid #000000;
+    border-bottom: none;
+    color: #000000;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  input[type="email"]:focus {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  input[type="email"]:focus::placeholder {
+    color: #ffffff;
+  }
+
+  button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: #000000;
+    color: #ffffff;
+    font-size: 1rem;
+    border: 2px solid #000000;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  button:hover {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  button:active {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .message-container {
+    text-align: center;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border: 2px solid #000000;
+  }
+
+  .message-container.hidden {
+    display: none;
+  }
+
+  .message-container.error {
+    color: #ffffff;
+    background: #000000;
+  }
+
+  .message-container.success {
+    color: #000000;
+    background: #ffffff;
+  }
+</style>
