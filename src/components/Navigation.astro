@@ -1,0 +1,269 @@
+---
+import EmailCapture from './EmailCapture.astro';
+
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'light' } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+<nav class="nav-container" id="bottom-nav">
+  <div class="nav-content">
+    <span class="brand-logo" id="brand-clock">11:34</span>
+    <p class="brand-tagline">Nothing future, nothing past</p>
+
+    <ul class="nav-links">
+      <li><a href="/" class={currentPath === '/' ? 'active' : ''}>Home</a></li>
+      <li><a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a></li>
+      <li><a href="/artists" class={currentPath === '/artists' ? 'active' : ''}>Artists</a></li>
+      <li><a href="/tickets" class={currentPath === '/tickets' ? 'active' : ''}>Tickets</a></li>
+      <li><a href="/merch" class={currentPath === '/merch' ? 'active' : ''}>Merch</a></li>
+    </ul>
+
+    <div class="nav-signup">
+      <EmailCapture />
+    </div>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('bottom-nav');
+  let isVisible = false;
+
+  function showNav() {
+    if (isVisible) return;
+    isVisible = true;
+    nav?.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hideNav() {
+    if (!isVisible) return;
+    isVisible = false;
+    nav?.classList.remove('visible');
+    document.body.style.overflow = '';
+  }
+
+  // Glitchy clock with 1, 1, 3, 4 variations
+  const glitchDigits = ['1', '1', '3', '4'];
+
+  function getGlitchDigit() {
+    return glitchDigits[Math.floor(Math.random() * glitchDigits.length)];
+  }
+
+  function updateGlitchyClock() {
+    // Generate a time-like pattern but with glitchy digits (11:34 format)
+    const d1 = getGlitchDigit();
+    const d2 = getGlitchDigit();
+    const d3 = getGlitchDigit();
+    const d4 = getGlitchDigit();
+
+    const timeString = `${d1}${d2}:${d3}${d4}`;
+
+    // Update clock elements
+    const brandClock = document.getElementById('brand-clock');
+    const currentTimeElement = document.getElementById('current-time');
+    if (brandClock) brandClock.textContent = timeString;
+    if (currentTimeElement) currentTimeElement.textContent = timeString;
+  }
+
+  // Update glitchy clock at varying intervals for a more erratic feel
+  function scheduleNextUpdate() {
+    const delay = 80 + Math.random() * 200; // Random delay between 80-280ms
+    setTimeout(() => {
+      updateGlitchyClock();
+      scheduleNextUpdate();
+    }, delay);
+  }
+
+  updateGlitchyClock();
+  scheduleNextUpdate();
+
+  // Show/hide menu based on scroll direction
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+
+    // Scrolling down - show menu
+    if (currentScrollY > lastScrollY && currentScrollY > 5 && !isVisible) {
+      showNav();
+    }
+
+    // Scrolling up - hide menu
+    if (currentScrollY < lastScrollY && isVisible) {
+      hideNav();
+    }
+
+    lastScrollY = currentScrollY;
+  }, { passive: true });
+
+  // Also trigger on wheel for non-scrollable pages
+  window.addEventListener('wheel', (e) => {
+    // deltaY > 0 means scrolling down
+    if (e.deltaY > 0 && !isVisible) {
+      showNav();
+    } else if (e.deltaY < 0 && isVisible) {
+      hideNav();
+    }
+  }, { passive: true });
+
+  // Touch handling for mobile
+  let touchStartY = 0;
+  window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    const touchY = e.touches[0].clientY;
+    const diff = touchStartY - touchY;
+
+    // Swiping up (scrolling down) - show menu
+    if (diff > 20 && !isVisible) {
+      showNav();
+    }
+    // Swiping down (scrolling up) - hide menu
+    if (diff < -20 && isVisible) {
+      hideNav();
+    }
+  }, { passive: true });
+
+  // Hide when clicking links (navigate away)
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      hideNav();
+    });
+  });
+
+  // Hide on escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isVisible) {
+      hideNav();
+    }
+  });
+</script>
+
+<style>
+  .skip-to-content {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-decoration: none;
+    z-index: 10001;
+  }
+
+  .skip-to-content:focus {
+    top: 0;
+  }
+
+  .nav-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50vh;
+    z-index: 1000;
+    background: rgba(245, 245, 240, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+    color: #000000;
+    will-change: transform, opacity;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.3s ease-out;
+  }
+
+  .nav-container.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-content {
+    height: 100%;
+    margin: 0 auto;
+    max-width: var(--max-width);
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .brand-logo {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 5rem;
+    letter-spacing: -0.04em;
+    color: var(--color-text-primary);
+    display: block;
+    line-height: 0.9;
+  }
+
+  .brand-tagline {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm) var(--spacing-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: 0.02em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    opacity: 0.5;
+  }
+
+  .nav-signup {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  /* Mobile responsive styles */
+  @media (max-width: 768px) {
+    .nav-container {
+      height: 100vh;
+    }
+
+    .nav-content {
+      padding: var(--spacing-md);
+    }
+
+    .brand-logo {
+      font-size: 4rem;
+    }
+
+    .nav-signup {
+      max-width: 100%;
+    }
+  }
+</style>

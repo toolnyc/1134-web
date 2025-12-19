@@ -62,47 +62,62 @@ export const POST: APIRoute = async ({ request }) => {
     // Note: All emails are stored in Supabase, so you have your contact list there
     try {
       await resend.emails.send({
-        from: 'onboarding@resend.dev', // TODO: Replace with your verified domain
+        from: 'admin@1134.world',
         to: trimmedEmail,
-        subject: 'Welcome to 11:34 - You\'re on the List',
+        subject: 'Welcome to 11:34',
         html: `
           <!DOCTYPE html>
           <html>
             <head>
               <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <style>
                 body {
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                  background-color: #0a0a0a;
-                  color: #c0c0c0;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+                  background-color: #ffffff;
+                  color: #000000;
                   margin: 0;
                   padding: 0;
+                  font-weight: 300;
+                  -webkit-font-smoothing: antialiased;
                 }
                 .container {
-                  max-width: 600px;
+                  max-width: 500px;
                   margin: 0 auto;
-                  padding: 40px 20px;
+                  padding: 60px 20px;
                 }
                 .header {
                   text-align: center;
-                  margin-bottom: 40px;
+                  margin-bottom: 48px;
                 }
                 .title {
-                  font-size: 48px;
-                  font-weight: bold;
-                  color: #c0c0c0;
+                  font-size: 32px;
+                  font-weight: 300;
+                  color: #000000;
                   margin: 0;
-                  letter-spacing: 2px;
+                  letter-spacing: 0.1em;
                 }
                 .content {
-                  line-height: 1.6;
-                  margin-bottom: 30px;
+                  text-align: center;
+                  line-height: 1.8;
+                  color: #666666;
+                  font-size: 15px;
+                }
+                .content p {
+                  margin: 0 0 16px 0;
+                }
+                .divider {
+                  width: 40px;
+                  height: 1px;
+                  background: #f5f5f5;
+                  margin: 40px auto;
                 }
                 .footer {
                   text-align: center;
                   font-size: 12px;
-                  color: #666;
-                  margin-top: 40px;
+                  color: #999999;
+                  margin-top: 48px;
+                  letter-spacing: 0.05em;
                 }
               </style>
             </head>
@@ -112,20 +127,27 @@ export const POST: APIRoute = async ({ request }) => {
                   <h1 class="title">11:34</h1>
                 </div>
                 <div class="content">
-                  <p>Welcome to the mystical,</p>
-                  <p>You've successfully joined the 11:34 waitlist. You're now part of an exclusive underground experience that transcends reality.</p>
-                  <p>We'll reach out when the portal opens.</p>
-                  <p>Stay mystical.</p>
+                  <p>Welcome.</p>
+                  <p>You've joined the waitlist.</p>
+                  <p>We'll reach out when the time comes.</p>
                 </div>
+                <div class="divider"></div>
                 <div class="footer">
-                  <p>&copy; ${new Date().getFullYear()} 11:34. All rights reserved.</p>
+                  <p>${new Date().getFullYear()} 11:34</p>
                 </div>
               </div>
             </body>
           </html>
         `,
-        // TODO: Customize email template with your brand assets and styling
-        // TODO: Add plain text version for better email client compatibility
+        text: `11:34
+
+Welcome.
+
+You've joined the waitlist.
+We'll reach out when the time comes.
+
+---
+${new Date().getFullYear()} 11:34`,
       });
     } catch (emailError) {
       // Log email error but don't fail the request

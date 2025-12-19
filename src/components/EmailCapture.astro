@@ -1,8 +1,13 @@
 ---
 // Email capture component for 11:34 waitlist
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'light' } = Astro.props;
 ---
 
-<div class="email-capture-container">
+<div class:list={['email-capture-container', { 'capture-dark': theme === 'dark' }]}>
   <form id="email-form">
     <div class="input-wrapper">
       <input
@@ -13,12 +18,12 @@
         required
       />
     </div>
-    
+
     <button
       type="submit"
       id="submit-btn"
     >
-     Register for updates
+      Get updates
     </button>
 
     <div id="message-container" class="message-container hidden">
@@ -64,7 +69,7 @@
 
     // Disable form during submission
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Please wait.';
+    submitBtn.textContent = 'Please wait';
 
     try {
       const response = await fetch('/api/subscribe', {
@@ -78,16 +83,16 @@
       const data = await response.json();
 
       if (response.ok) {
-        showMessage(data.message || 'Successfully joined the waitlist!', false);
+        showMessage(data.message || 'Successfully joined the waitlist', false);
         emailInput.value = '';
       } else {
-        showMessage(data.error || 'Something went wrong. Please try again.', true);
+        showMessage(data.error || 'Something went wrong', true);
       }
     } catch (error) {
-      showMessage('Network error. Please check your connection and try again.', true);
+      showMessage('Network error', true);
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Join the Waitlist';
+      submitBtn.textContent = 'Get updates';
     }
   });
 </script>
@@ -95,73 +100,90 @@
 <style>
   .email-capture-container {
     width: 100%;
-    max-width: 28rem;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 1rem;
   }
 
   form {
     display: flex;
-    flex-direction: column;
-    gap: 0;
+    flex-direction: row;
+    gap: 0.5rem;
   }
 
   .input-wrapper {
     position: relative;
+    flex: 1;
   }
 
   input[type="email"] {
     width: 100%;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border: 2px solid #000000;
-    border-bottom: none;
-    color: #000000;
-    font-size: 1rem;
+    padding: 0.625rem 1rem;
+    background: var(--color-bg-primary);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: var(--border-radius);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-normal);
     outline: none;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
   }
 
   input[type="email"]:focus {
-    background: #000000;
-    color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.3);
   }
 
-  input[type="email"]:focus::placeholder {
-    color: #ffffff;
+  input[type="email"]::placeholder {
+    color: var(--color-text-tertiary);
   }
 
   button {
-    width: 100%;
-    padding: 1rem 1.5rem;
-    background: #000000;
-    color: #ffffff;
-    font-size: 1rem;
-    border: 2px solid #000000;
+    padding: 0.625rem 1.25rem;
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-normal);
+    border: none;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    transition: all 0.1s;
+    transition: opacity var(--transition-fast), background-color var(--transition-fast);
+    white-space: nowrap;
   }
 
   button:hover {
-    background: #ffffff;
-    color: #000000;
-  }
-
-  button:active {
-    background: #000000;
-    color: #ffffff;
+    opacity: 0.8;
   }
 
   button:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
+  }
+
+  /* Dark theme styles */
+  .capture-dark input[type="email"] {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--color-text-light);
+  }
+
+  .capture-dark input[type="email"]:focus {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .capture-dark input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .capture-dark button {
+    background: var(--color-text-light);
+    color: var(--color-bg-dark);
   }
 
   .message-container {
     text-align: center;
-    font-size: 0.875rem;
-    padding: 0.5rem;
-    margin-top: 1rem;
-    border: 2px solid #000000;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-normal);
+    padding: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
   }
 
   .message-container.hidden {
@@ -169,12 +191,28 @@
   }
 
   .message-container.error {
-    color: #ffffff;
-    background: #000000;
+    color: var(--color-text-primary);
   }
 
   .message-container.success {
-    color: #000000;
-    background: #ffffff;
+    color: var(--color-text-secondary);
+  }
+
+  .capture-dark .message-container.error {
+    color: var(--color-text-light);
+  }
+
+  .capture-dark .message-container.success {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    form {
+      flex-direction: column;
+    }
+
+    button {
+      width: 100%;
+    }
   }
 </style>

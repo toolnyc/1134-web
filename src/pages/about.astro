@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About - 11:34" description="A moment suspended between what was and what will be.">
+  <main class="page-main">
+    <section class="page-content">
+      <div class="content-wrapper">
+        <div class="about-text">
+          <p class="lead">11:34</p>
+          <p>A moment suspended between what was and what will be.</p>
+          <p>Neither morning nor afternoon. Neither here nor there.</p>
+          <p>In the space between, we find ourselves.</p>
+        </div>
+        <div class="about-footer">
+          <p>Los Angeles, CA</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .page-main {
+    min-height: calc(100vh - var(--nav-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page-content {
+    padding: var(--spacing-xl) var(--spacing-md);
+    width: 100%;
+  }
+
+  .content-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .about-text .lead {
+    font-family: var(--font-brand);
+    font-size: var(--text-2xl);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .about-text p {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+  }
+
+  .about-footer {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-accent);
+  }
+
+  .about-footer p {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.05em;
+  }
+</style>

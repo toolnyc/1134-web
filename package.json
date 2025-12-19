@@ -12,5 +12,8 @@
     "@supabase/supabase-js": "^2.87.1",
     "astro": "^5.16.4",
     "resend": "^6.5.2"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   }
 }

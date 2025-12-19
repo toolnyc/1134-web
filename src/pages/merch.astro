@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Merch - 11:34">
+  <main class="page-main">
+    <section class="page-content">
+      <div class="coming-soon">
+        <img src="/images/favicon-dark.svg" alt="" class="spinning-logo" />
+        <p>Coming soon</p>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .page-main {
+    min-height: calc(100vh - var(--nav-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page-content {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .spinning-logo {
+    width: 60px;
+    height: 60px;
+    animation: spin 12s linear infinite;
+    filter: blur(1.5px);
+  }
+
+  .coming-soon p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotateX(8deg) rotateZ(-5deg) rotateY(0deg);
+    }
+    to {
+      transform: rotateX(8deg) rotateZ(-5deg) rotateY(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinning-logo {
+      animation: none;
+    }
+  }
+</style>

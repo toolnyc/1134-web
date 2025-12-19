@@ -1,0 +1,73 @@
+---
+import Marquee from './Marquee.astro';
+---
+
+<section class="hero-container" id="main-content">
+  <Marquee />
+  <div class="hero-content">
+    <img src="/images/favicon-dark.svg" alt="11:34" class="hero-logo" />
+  </div>
+</section>
+
+<style>
+  .hero-container {
+    position: relative;
+    width: 100%;
+    min-height: 80vh;
+    padding: var(--spacing-xl) 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-logo {
+    width: clamp(150px, 30vw, 300px);
+    height: auto;
+    animation: spinZ 12s linear infinite;
+    filter: blur(1.5px);
+  }
+
+  @keyframes spinZ {
+    from {
+      transform: rotateX(8deg) rotateZ(-5deg) rotateY(0deg);
+    }
+    to {
+      transform: rotateX(8deg) rotateZ(-5deg) rotateY(360deg);
+    }
+  }
+
+  /* Tablet and mobile adjustments */
+  @media (max-width: 768px) {
+    .hero-container {
+      min-height: 60vh;
+      padding: var(--spacing-lg) 0;
+    }
+
+    .hero-logo {
+      width: clamp(120px, 40vw, 200px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-container {
+      min-height: 50vh;
+      padding: var(--spacing-md) 0;
+    }
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-logo {
+      animation: none;
+    }
+  }
+</style>

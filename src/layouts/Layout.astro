@@ -1,13 +1,24 @@
 ---
+import Navigation from '../components/Navigation.astro';
+
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
+  theme?: 'light' | 'dark';
 }
 
 const {
-  title = ' 11:34',
-  description = 'The sound is the source of the soul. Connected, the soul is full of light; forgotten, the soul is full of darkness.',
+  title = '11:34',
+  description = 'Eleven Thirty Four',
+  ogImage = '/images/og-image.jpg',
+  theme = 'light',
 } = Astro.props;
+
+const isDark = theme === 'dark';
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://1134.world');
+const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
 ---
 
 <!doctype html>
@@ -18,25 +29,91 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    
+
+    <!-- Font Preload -->
+    <link rel="preload" href="/fonts/Gossip-MedCrossStitch.woff2" as="font" type="font/woff2" crossorigin />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    
+    <meta property="og:image" content={ogImageURL.href} />
+    <meta property="og:site_name" content="11:34" />
+
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL.href} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL.href} />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL.href} />
+
     <title>{title}</title>
   </head>
-  <body>
+  <body class={isDark ? 'theme-dark' : 'theme-light'}>
+    <Navigation theme={theme} />
     <slot />
   </body>
 </html>
 
 <style is:global>
+  /* Font Declarations */
+  @font-face {
+    font-family: 'Gossip-MedCrossStitch';
+    src: url('/fonts/Gossip-MedCrossStitch.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* CSS Custom Properties - Design System */
+  :root {
+    /* Minimal monochromatic palette */
+    --color-bg-primary: #f5f5f0;
+    --color-bg-dark: #000000;
+    --color-bg-secondary: #ebebeb;
+    --color-text-primary: #000000;
+    --color-text-light: #f5f5f0;
+    --color-text-secondary: #555555;
+    --color-text-tertiary: #888888;
+    --color-accent: #e8e8e3;
+
+    /* Spacing - generous whitespace */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
+    --spacing-xl: 6rem;
+
+    /* Layout */
+    --nav-height: 60px;
+    --max-width: 1200px;
+    --content-max-width: 900px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+
+    /* Typography */
+    --font-primary: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-brand: 'Gossip-MedCrossStitch', serif;
+    --text-sm: 0.8125rem;
+    --text-base: 0.9375rem;
+    --text-lg: 1rem;
+    --text-xl: 1.125rem;
+    --text-2xl: 1.5rem;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+
+    /* Border Radius */
+    --border-radius: 0px;
+  }
+
+  /* Reset */
   * {
     box-sizing: border-box;
     margin: 0;
@@ -44,14 +121,32 @@ const {
   }
 
   html {
-    font-family: Arial, sans-serif;
-    letter-spacing: -0.015em;
+    font-family: var(--font-primary);
+    scroll-behavior: smooth;
   }
 
   body {
     min-height: 100vh;
-    background: #ffffff;
-    color: #000000;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    padding-top: var(--spacing-md);
+    padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.03em;
+    font-weight: var(--font-weight-normal);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Dark theme */
+  body.theme-dark {
+    background: var(--color-bg-dark);
+    color: var(--color-text-light);
+  }
+
+  body.theme-dark ::placeholder {
+    color: #666666;
   }
 
   input,
@@ -59,12 +154,42 @@ const {
   textarea,
   select {
     font-family: inherit;
-    letter-spacing: inherit;
+    border-radius: var(--border-radius);
+  }
+
+  img {
+    border-radius: var(--border-radius);
   }
 
   ::placeholder {
-    color: #000000;
-    opacity: 0.5;
+    color: var(--color-text-tertiary);
+    opacity: 1;
+  }
+
+
+  /* Red overlay effect */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: #8b0000;
+    mix-blend-mode: color;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
   }
 </style>
 

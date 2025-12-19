@@ -1,0 +1,163 @@
+---
+// Large typing text in snake pattern behind hero
+// Types out text line by line, then deletes and repeats
+const lines = [
+  "NOTHING FUTURE NOTHING PAST",
+  "TIE ME AT THE PRESENTS MAST",
+  "ONE IN PAIR THREE TURN FAST",
+  "NOTHING EVER BUILT TO LAST",
+  "DOWN DOWN DESCEND WITH ME",
+  "IN THE PRESENT WE ARE FREE",
+];
+---
+
+<div class="snake-text-container" id="snake-text" aria-hidden="true">
+  {lines.map((line, i) => (
+    <div class={`snake-line ${i % 2 === 0 ? 'ltr' : 'rtl'}`} data-line={i}>
+      <span class="snake-text"></span>
+    </div>
+  ))}
+</div>
+
+<script define:vars={{ lines }}>
+  const container = document.getElementById('snake-text');
+  const lineElements = container?.querySelectorAll('.snake-line');
+
+  if (lineElements) {
+    const typeSpeed = 80; // ms per character (slower)
+    const deleteSpeed = 30; // ms per character when deleting
+    const pauseBeforeDelete = 2000; // pause at end before deleting
+    const pauseBeforeRestart = 1000; // pause after delete before restart
+
+    let currentLineIndex = 0;
+    let isTyping = true;
+    let isDeleting = false;
+
+    function typeAllLines() {
+      let lineDelay = 0;
+
+      // Type each line sequentially
+      lineElements.forEach((line, lineIndex) => {
+        const textEl = line.querySelector('.snake-text');
+        if (!textEl) return;
+
+        const fullText = lines[lineIndex];
+
+        setTimeout(() => {
+          let charIndex = 0;
+          const typeInterval = setInterval(() => {
+            if (charIndex < fullText.length) {
+              textEl.textContent = fullText.slice(0, charIndex + 1);
+              charIndex++;
+            } else {
+              clearInterval(typeInterval);
+              // If this is the last line, start delete after pause
+              if (lineIndex === lines.length - 1) {
+                setTimeout(deleteAllLines, pauseBeforeDelete);
+              }
+            }
+          }, typeSpeed);
+        }, lineDelay);
+
+        lineDelay += fullText.length * typeSpeed + 300; // delay for next line
+      });
+    }
+
+    function deleteAllLines() {
+      let lineDelay = 0;
+
+      // Delete from last line to first
+      for (let lineIndex = lines.length - 1; lineIndex >= 0; lineIndex--) {
+        const line = lineElements[lineIndex];
+        const textEl = line.querySelector('.snake-text');
+        if (!textEl) continue;
+
+        const currentText = lines[lineIndex];
+
+        setTimeout(() => {
+          let charIndex = currentText.length;
+          const deleteInterval = setInterval(() => {
+            if (charIndex > 0) {
+              charIndex--;
+              textEl.textContent = currentText.slice(0, charIndex);
+            } else {
+              clearInterval(deleteInterval);
+              // If this is the first line (last to delete), restart typing
+              if (lineIndex === 0) {
+                setTimeout(typeAllLines, pauseBeforeRestart);
+              }
+            }
+          }, deleteSpeed);
+        }, lineDelay);
+
+        lineDelay += currentText.length * deleteSpeed + 100;
+      }
+    }
+
+    // Start the animation
+    typeAllLines();
+  }
+</script>
+
+<style>
+  .snake-text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    max-height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    opacity: 0.07;
+  }
+
+  .snake-line {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .snake-line.ltr {
+    text-align: left;
+    padding-left: 5vw;
+  }
+
+  .snake-line.rtl {
+    text-align: right;
+    padding-right: 5vw;
+  }
+
+  .snake-text {
+    font-family: var(--font-brand);
+    font-size: clamp(1.875rem, 6.25vw, 4.375rem);
+    color: var(--color-text-primary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    min-height: 1.1em;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .snake-text {
+      font-size: clamp(1.25rem, 5vw, 2.5rem);
+    }
+
+    .snake-text-container {
+      gap: 0.05rem;
+    }
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .snake-text {
+      visibility: visible !important;
+    }
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+import EmailCapture from './EmailCapture.astro';
+
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'light' } = Astro.props;
+---
+
+<footer class:list={['footer-container', { 'footer-dark': theme === 'dark' }]}>
+  <div class="footer-content">
+    <EmailCapture theme={theme} />
+  </div>
+</footer>
+
+<style>
+  .footer-container {
+    background: transparent;
+    padding: var(--spacing-xl) var(--spacing-md);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .footer-container.footer-dark {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-content {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+</style>
