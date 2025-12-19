@@ -54,8 +54,21 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
     <title>{title}</title>
   </head>
   <body class={isDark ? 'theme-dark' : 'theme-light'}>
+    <!-- SVG Filter for ink bleed/threshold effect -->
+    <svg class="svg-filters" aria-hidden="true">
+      <defs>
+        <filter id="threshold">
+          <feComponentTransfer>
+            <feFuncA type="discrete" tableValues="0 1 1 1" />
+          </feComponentTransfer>
+        </filter>
+      </defs>
+    </svg>
+    <!-- Navigation outside page-content so position:fixed works relative to viewport -->
     <Navigation theme={theme} />
-    <slot />
+    <div class="page-content">
+      <slot />
+    </div>
   </body>
 </html>
 
@@ -113,6 +126,19 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
     --border-radius: 0px;
   }
 
+  /* Hidden SVG for filters */
+  .svg-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* Global ink bleed/threshold effect layer */
+  .page-content {
+    filter: blur(0.5px) url(#threshold);
+  }
+
   /* Reset */
   * {
     box-sizing: border-box;
@@ -123,6 +149,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
   html {
     font-family: var(--font-primary);
     scroll-behavior: smooth;
+    overscroll-behavior: none;
   }
 
   body {
@@ -131,12 +158,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
     color: var(--color-text-primary);
     line-height: 1.7;
     padding-top: var(--spacing-md);
-    padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
+    padding-bottom: var(--spacing-md);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.03em;
     font-weight: var(--font-weight-normal);
     transition: background-color 0.4s ease, color 0.4s ease;
+    overscroll-behavior: none;
   }
 
   /* Dark theme */

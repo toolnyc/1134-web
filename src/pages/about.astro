@@ -2,18 +2,16 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="About - 11:34" description="A moment suspended between what was and what will be.">
+<Layout title="About - 11:34">
   <main class="page-main">
     <section class="page-content">
       <div class="content-wrapper">
         <div class="about-text">
-          <p class="lead">11:34</p>
-          <p>A moment suspended between what was and what will be.</p>
-          <p>Neither morning nor afternoon. Neither here nor there.</p>
-          <p>In the space between, we find ourselves.</p>
+          <p>11:34 is a club-night and party ecosystem created by a union of like-minded artists.</p>
         </div>
         <div class="about-footer">
-          <p>Los Angeles, CA</p>
+          <p>11:34 World ®</p>
+          <p>New York, New York</p>
         </div>
       </div>
     </section>
@@ -22,7 +20,7 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
   .page-main {
-    min-height: calc(100vh - var(--nav-height));
+    min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -31,6 +29,9 @@ import Layout from '../layouts/Layout.astro';
   .page-content {
     padding: var(--spacing-xl) var(--spacing-md);
     width: 100%;
+    letter-spacing: -0.05em;
+        filter: blur(0.75px);
+
   }
 
   .content-wrapper {
@@ -42,26 +43,28 @@ import Layout from '../layouts/Layout.astro';
   .about-text {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 
   .about-text .lead {
-    font-family: var(--font-brand);
     font-size: var(--text-2xl);
     letter-spacing: 0.1em;
     margin-bottom: var(--spacing-sm);
   }
 
   .about-text p {
-    font-size: var(--text-base);
+    font-size: 3rem;
+    font-family: var(--font-brand); 
+    font-family: var();
     color: var(--color-text-secondary);
     line-height: 1.8;
   }
 
   .about-footer {
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-md);
-    border-top: 1px solid var(--color-accent);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    text-transform: uppercase;
+    opacity: 0.875;
   }
 
   .about-footer p {

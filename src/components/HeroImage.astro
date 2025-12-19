@@ -34,6 +34,9 @@ import Marquee from './Marquee.astro';
     height: auto;
     animation: spinZ 12s linear infinite;
     filter: blur(1.5px);
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
   }
 
   @keyframes spinZ {
@@ -48,8 +51,9 @@ import Marquee from './Marquee.astro';
   /* Tablet and mobile adjustments */
   @media (max-width: 768px) {
     .hero-container {
-      min-height: 60vh;
+      min-height: 80vh;
       padding: var(--spacing-lg) 0;
+      overflow: visible;
     }
 
     .hero-logo {
@@ -59,7 +63,7 @@ import Marquee from './Marquee.astro';
 
   @media (max-width: 480px) {
     .hero-container {
-      min-height: 50vh;
+      min-height: 70vh;
       padding: var(--spacing-md) 0;
     }
   }
