@@ -11,7 +11,7 @@ interface Props {
 const {
   title = '11:34',
   description = 'Eleven Thirty Four',
-  ogImage = '/images/og-image.jpg',
+  ogImage = '/images/logo-dk-8.png',
   theme = 'light',
 } = Astro.props;
 
@@ -137,6 +137,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
   /* Global ink bleed/threshold effect layer */
   .page-content {
     filter: blur(0.5px) url(#threshold);
+  }
+
+  /* Reduce blur on mobile */
+  @media (max-width: 768px) {
+    .page-content {
+      filter: blur(0.3px) url(#threshold);
+    }
   }
 
   /* Reset */
