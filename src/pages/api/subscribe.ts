@@ -60,11 +60,13 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Send confirmation email via Resend
     // Note: All emails are stored in Supabase, so you have your contact list there
+    const logoUrl = 'https://1134.world/images/logo-dk-8.png';
+
     try {
       await resend.emails.send({
-        from: 'admin@1134.world',
+        from: 'Admin @ 11:34 <admin@1134.world>',
         to: trimmedEmail,
-        subject: 'Welcome to 11:34',
+        subject: "You're on the list",
         html: `
           <!DOCTYPE html>
           <html>
@@ -90,18 +92,14 @@ export const POST: APIRoute = async ({ request }) => {
                   text-align: center;
                   margin-bottom: 48px;
                 }
-                .title {
-                  font-size: 32px;
-                  font-weight: 300;
-                  color: #000000;
-                  margin: 0;
-                  letter-spacing: 0.1em;
+                .logo {
+                  margin-bottom: 24px;
                 }
                 .content {
                   text-align: center;
                   line-height: 1.8;
-                  color: #666666;
-                  font-size: 15px;
+                  color: #333333;
+                  font-size: 16px;
                 }
                 .content p {
                   margin: 0 0 16px 0;
@@ -109,14 +107,21 @@ export const POST: APIRoute = async ({ request }) => {
                 .divider {
                   width: 40px;
                   height: 1px;
-                  background: #f5f5f5;
+                  background: #e0e0e0;
                   margin: 40px auto;
+                }
+                .signature {
+                  text-align: center;
+                  font-size: 14px;
+                  color: #666666;
+                  margin-top: 48px;
+                  font-style: italic;
                 }
                 .footer {
                   text-align: center;
-                  font-size: 12px;
+                  font-size: 11px;
                   color: #999999;
-                  margin-top: 48px;
+                  margin-top: 32px;
                   letter-spacing: 0.05em;
                 }
               </style>
@@ -124,30 +129,34 @@ export const POST: APIRoute = async ({ request }) => {
             <body>
               <div class="container">
                 <div class="header">
-                  <h1 class="title">11:34</h1>
+                  <div class="logo">
+                    <img src="${logoUrl}" alt="11:34" width="80" height="64" style="display: block; margin: 0 auto;">
+                  </div>
                 </div>
                 <div class="content">
-                  <p>Welcome.</p>
-                  <p>You've joined the waitlist.</p>
-                  <p>We'll reach out when the time comes.</p>
+                  <p>Your spot on the waitlist is confirmed.</p>
+                  <p>We'll be in touch when it's time.</p>
                 </div>
                 <div class="divider"></div>
+                <div class="signature">
+                  <p>Admin @ 11:34</p>
+                </div>
                 <div class="footer">
-                  <p>${new Date().getFullYear()} 11:34</p>
+                  <p>&copy; ${new Date().getFullYear()} 11:34</p>
                 </div>
               </div>
             </body>
           </html>
         `,
-        text: `11:34
+        text: `Your spot on the waitlist is confirmed.
 
-Welcome.
-
-You've joined the waitlist.
-We'll reach out when the time comes.
+We'll be in touch when it's time.
 
 ---
-${new Date().getFullYear()} 11:34`,
+
+Admin @ 11:34
+
+© ${new Date().getFullYear()} 11:34`,
       });
     } catch (emailError) {
       // Log email error but don't fail the request

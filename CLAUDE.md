@@ -1,10 +1,17 @@
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Your workflow is always plan > propose > refine > implement > refine. Do not ask before entering plan mode.
 
 ## Project Overview
 
 11:34 is a minimal, Astro landing page with email waitlist functionality. The site captures emails, stores them in Supabase, and sends confirmation emails via Resend. 
+
+## Git Strategty
+
+Always begin new work on a worktree, prioritizing the ability to separate concerns and work in parellel.
+
+
 ## Tech Stack
 
 - **Astro v5** with server output mode (required for API routes)
@@ -84,36 +91,6 @@ Handles email waitlist subscriptions with validation and duplicate checking.
 - Duplicate detection via PostgreSQL unique constraint (error code 23505)
 - Email sending failures don't fail the subscription (user still added to waitlist)
 - All API routes must have `export const prerender = false` to work with server mode
-
-## Important Code Patterns
-
-### Email Validation
-Validation occurs in two places with identical regex:
-- Client-side: src/components/EmailCapture.astro (line 37)
-- Server-side: src/pages/api/subscribe.ts (line 6)
-
-Both use: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
-
-### Error Handling in Components
-The EmailCapture component uses className toggling for message display:
-- `hidden` - No message shown
-- `error` - Black background, white text
-- `success` - White background, black text
-
-Button states during submission show "Please wait." text and disable the button.
-
-## Known TODO Items
-
-1. **Email template customization** (src/pages/api/subscribe.ts:127-128):
-   - Replace `from: 'onboarding@resend.dev'` with verified domain
-   - Add plain text email version
-   - Customize HTML template with brand assets
-
-2. **Tablet Carousel** (src/components/TabletCarousel.astro):
-   - Currently a placeholder component
-   - Needs swipe/drag functionality
-   - Auto-play with pause on hover
-   - Navigation dots/arrows
 
 ## Testing Setup
 
