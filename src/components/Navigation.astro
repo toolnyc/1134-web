@@ -47,6 +47,8 @@ const currentPath = Astro.url.pathname;
 
   function hideNav() {
     if (!isVisible) return;
+    // Don't hide if user is interacting with form inside nav
+    if (nav?.contains(document.activeElement) && document.activeElement?.tagName !== 'BODY') return;
     isVisible = false;
     nav?.classList.remove('visible');
     menuTrigger?.classList.remove('hidden');

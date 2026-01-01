@@ -25,45 +25,54 @@ const { theme = 'light' } = Astro.props;
     >
       Get updates
     </button>
-
-    <div id="message-container" class="message-container hidden">
-      <!-- Success/error messages will appear here -->
-    </div>
   </form>
+</div>
+
+<div id="toast-container" class="toast-container">
+  <div id="toast" class="toast"></div>
 </div>
 
 <script>
   const form = document.getElementById('email-form') as HTMLFormElement;
   const emailInput = document.getElementById('email-input') as HTMLInputElement;
   const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-  const messageContainer = document.getElementById('message-container') as HTMLDivElement;
+  const toastContainer = document.getElementById('toast-container') as HTMLDivElement;
+  const toast = document.getElementById('toast') as HTMLDivElement;
 
   // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  function showMessage(message: string, isError: boolean = false) {
-    messageContainer.textContent = message;
-    messageContainer.className = `message-container ${isError ? 'error' : 'success'}`;
+  let toastTimeout: ReturnType<typeof setTimeout>;
+
+  function showToast(message: string, isError: boolean = false) {
+    clearTimeout(toastTimeout);
+    toast.textContent = message;
+    toast.className = `toast ${isError ? 'error' : 'success'}`;
+    toastContainer.classList.add('visible');
+
+    // Auto-dismiss after 4 seconds
+    toastTimeout = setTimeout(() => {
+      hideToast();
+    }, 4000);
   }
 
-  function hideMessage() {
-    messageContainer.className = 'message-container hidden';
+  function hideToast() {
+    toastContainer.classList.remove('visible');
   }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    hideMessage();
 
     const email = emailInput.value.trim();
 
     // Client-side validation
     if (!email) {
-      showMessage('Enter email', true);
+      showToast('Enter email', true);
       return;
     }
 
     if (!emailRegex.test(email)) {
-      showMessage('Invalid', true);
+      showToast('Invalid email', true);
       return;
     }
 
@@ -83,13 +92,13 @@ const { theme = 'light' } = Astro.props;
       const data = await response.json();
 
       if (response.ok) {
-        showMessage(data.message || 'Successfully joined the waitlist', false);
+        showToast(data.message || 'Successfully joined the waitlist');
         emailInput.value = '';
       } else {
-        showMessage(data.error || 'Something went wrong', true);
+        showToast(data.error || 'Something went wrong', true);
       }
     } catch (error) {
-      showMessage('Network error', true);
+      showToast('Network error', true);
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Get updates';
@@ -122,7 +131,7 @@ const { theme = 'light' } = Astro.props;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: var(--border-radius);
     color: var(--color-text-primary);
-    font-size: var(--text-sm);
+    font-size: 1rem;
     font-weight: var(--font-weight-normal);
     outline: none;
     transition: border-color var(--transition-fast), background-color var(--transition-fast);
@@ -190,32 +199,46 @@ const { theme = 'light' } = Astro.props;
     opacity: 0.4;
   }
 
-  .message-container {
-    text-align: center;
+  /* Toast notification */
+  .toast-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    pointer-events: none;
+    z-index: 10000;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .toast-container.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .toast {
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--border-radius);
     font-size: var(--text-sm);
     font-weight: var(--font-weight-normal);
-    padding: var(--spacing-sm);
-    margin-top: var(--spacing-sm);
+    text-align: center;
+    max-width: 90%;
+    opacity: 0.8;
   }
 
-  .message-container.hidden {
-    display: none;
+  .toast.error {
+    background: var(--color-text-primary);
   }
 
-  .message-container.error {
-    color: var(--color-text-primary);
-  }
-
-  .message-container.success {
-    color: var(--color-text-secondary);
-  }
-
-  .capture-dark .message-container.error {
-    color: var(--color-text-light);
-  }
-
-  .capture-dark .message-container.success {
-    color: rgba(255, 255, 255, 0.6);
+  .toast.success {
+    background: var(--color-text-primary);
   }
 
   @media (max-width: 768px) {
