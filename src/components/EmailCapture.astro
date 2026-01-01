@@ -28,36 +28,49 @@ const { theme = 'light' } = Astro.props;
   </form>
 </div>
 
-<div id="toast-container" class="toast-container">
-  <div id="toast" class="toast"></div>
-</div>
-
 <script>
   const form = document.getElementById('email-form') as HTMLFormElement;
   const emailInput = document.getElementById('email-input') as HTMLInputElement;
   const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-  const toastContainer = document.getElementById('toast-container') as HTMLDivElement;
-  const toast = document.getElementById('toast') as HTMLDivElement;
 
   // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   let toastTimeout: ReturnType<typeof setTimeout>;
+  let toastContainer: HTMLDivElement | null = null;
+  let toast: HTMLDivElement | null = null;
 
-  function showToast(message: string, isError: boolean = false) {
+  function ensureToastExists() {
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.className = 'toast-container';
+      toast = document.createElement('div');
+      toast.className = 'toast';
+      toastContainer.appendChild(toast);
+      document.body.appendChild(toastContainer);
+    }
+  }
+
+  function showToast(message: string, isError: boolean = false, delay: number = 0) {
+    ensureToastExists();
     clearTimeout(toastTimeout);
-    toast.textContent = message;
-    toast.className = `toast ${isError ? 'error' : 'success'}`;
-    toastContainer.classList.add('visible');
 
-    // Auto-dismiss after 4 seconds
-    toastTimeout = setTimeout(() => {
-      hideToast();
-    }, 4000);
+    setTimeout(() => {
+      if (toast && toastContainer) {
+        toast.textContent = message;
+        toast.className = `toast ${isError ? 'error' : 'success'}`;
+        toastContainer.classList.add('visible');
+
+        // Auto-dismiss after 4 seconds
+        toastTimeout = setTimeout(() => {
+          hideToast();
+        }, 4000);
+      }
+    }, delay);
   }
 
   function hideToast() {
-    toastContainer.classList.remove('visible');
+    toastContainer?.classList.remove('visible');
   }
 
   form.addEventListener('submit', async (e) => {
@@ -92,13 +105,13 @@ const { theme = 'light' } = Astro.props;
       const data = await response.json();
 
       if (response.ok) {
-        showToast(data.message || 'Successfully joined the waitlist');
+        showToast(data.message || 'Successfully joined the waitlist', false, 1000);
         emailInput.value = '';
       } else {
-        showToast(data.error || 'Something went wrong', true);
+        showToast(data.error || 'Something went wrong', true, 1000);
       }
     } catch (error) {
-      showToast('Network error', true);
+      showToast('Network error', true, 1000);
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Get updates';
@@ -199,7 +212,20 @@ const { theme = 'light' } = Astro.props;
     opacity: 0.4;
   }
 
-  /* Toast notification */
+  @media (max-width: 768px) {
+    form {
+      flex-direction: column;
+    }
+
+    .input-wrapper,
+    button {
+      flex: none;
+      width: 100%;
+    }
+  }
+</style>
+
+<style is:global>
   .toast-container {
     position: fixed;
     bottom: 0;
@@ -231,25 +257,5 @@ const { theme = 'light' } = Astro.props;
     text-align: center;
     max-width: 90%;
     opacity: 0.8;
-  }
-
-  .toast.error {
-    background: var(--color-text-primary);
-  }
-
-  .toast.success {
-    background: var(--color-text-primary);
-  }
-
-  @media (max-width: 768px) {
-    form {
-      flex-direction: column;
-    }
-
-    .input-wrapper,
-    button {
-      flex: none;
-      width: 100%;
-    }
   }
 </style>
