@@ -22,7 +22,6 @@ const { theme = 'light' } = Astro.props;
     <button
       type="submit"
       id="submit-btn"
-      data-text="Get updates"
     >
       Get updates
     </button>
@@ -71,7 +70,6 @@ const { theme = 'light' } = Astro.props;
     // Disable form during submission
     submitBtn.disabled = true;
     submitBtn.textContent = 'Please wait';
-    submitBtn.dataset.text = 'Please wait';
 
     try {
       const response = await fetch('/api/subscribe', {
@@ -95,7 +93,6 @@ const { theme = 'light' } = Astro.props;
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Get updates';
-      submitBtn.dataset.text = 'Get updates';
     }
   });
 </script>
@@ -137,6 +134,7 @@ const { theme = 'light' } = Astro.props;
 
   input[type="email"]::placeholder {
     color: var(--color-text-tertiary);
+    
   }
 
   button {
@@ -144,43 +142,19 @@ const { theme = 'light' } = Astro.props;
     padding: 0.625rem 1.25rem;
     background: var(--color-text-primary);
     color: var(--color-bg-primary);
-    font-family: 'Gossip-MedCrossStitch', serif;
+    font-family: 'Helvetica', sans-serif;
     font-size: var(--text-sm);
     font-weight: var(--font-weight-normal);
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
     border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
-    transition: color var(--transition-fast), background-color var(--transition-fast);
+    transition: opacity var(--transition-fast), background-color var(--transition-fast);
     white-space: nowrap;
-    position: relative;
-    overflow: hidden;
-  }
-
-  button::after {
-    content: attr(data-text);
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Helvetica', sans-serif;
-    text-transform: capitalize;
-    font-size: var(--text-sm);
-    letter-spacing: -0.02em;
-    color: var(--color-bg-primary);
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-    pointer-events: none;
+    opacity: .66;
   }
 
   button:hover {
-    color: transparent;
-  }
-
-  button:hover::after {
-    opacity: 1;
+    opacity: 0.8;
   }
 
   button:disabled {
@@ -189,11 +163,7 @@ const { theme = 'light' } = Astro.props;
   }
 
   button:disabled:hover {
-    color: var(--color-bg-primary);
-  }
-
-  button:disabled:hover::after {
-    opacity: 0;
+    opacity: 0.4;
   }
 
   /* Dark theme styles */
@@ -216,12 +186,8 @@ const { theme = 'light' } = Astro.props;
     color: var(--color-bg-dark);
   }
 
-  .capture-dark button::after {
-    color: var(--color-bg-dark);
-  }
-
   .capture-dark button:disabled:hover {
-    color: var(--color-bg-dark);
+    opacity: 0.4;
   }
 
   .message-container {

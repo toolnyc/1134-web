@@ -122,7 +122,7 @@ export const POST: APIRoute = async ({ request }) => {
                   font-size: 11px;
                   color: #999999;
                   margin-top: 32px;
-                  letter-spacing: 0.05em;
+                  letter-spacing: -0.01em;
                 }
               </style>
             </head>

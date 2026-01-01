@@ -5,8 +5,8 @@
 <main class="page-main">
   <section class="page-section">
     <div class="coming-soon">
-      <img src="/images/favicon-dark.svg" alt="" class="spinning-logo" />
-      <p>Coming soon</p>
+      <p>Coming Soon. <br> Sign up in menu for updates.</p>
+
     </div>
   </section>
 </main>
@@ -27,25 +27,26 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: var(--spacing-md);
-    font-family: 'Gossip-MedCrossStitch', serif;
+    font-family: 'Helvetica', sans-serif;
   }
 
   .spinning-logo {
     width: 120px;
     height: 120px;
+    opacity: .66;
     animation: spin 12s linear infinite;
-    filter: blur(1.5px);
     user-select: none;
     -webkit-user-select: none;
     pointer-events: none;
+
   }
 
   .coming-soon p {
     font-size: var(--text-md);
     color: var(--color-text-tertiary);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    text-transform: capitalize;
   }
 
   @keyframes spin {

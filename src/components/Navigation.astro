@@ -11,33 +11,37 @@ const currentPath = Astro.url.pathname;
 
 <a href="#main-content" class="skip-to-content">Skip to main content</a>
 
+<button class="menu-trigger" id="menu-trigger" aria-label="Open menu">Menu</button>
+
 <nav class="nav-container" id="bottom-nav">
   <div class="nav-content">
     <span class="brand-logo" id="brand-clock">11:34</span>
     <ul class="nav-links">
-      <li><a href="/" class={currentPath === '/' ? 'active' : ''} data-text="Home">Home</a></li>
-      <li><a href="/about" class={currentPath === '/about' ? 'active' : ''} data-text="About">About</a></li>
-      <li><a href="/artists" class={currentPath === '/artists' ? 'active' : ''} data-text="Artists">Artists</a></li>
-      <li><a href="/tickets" class={currentPath === '/tickets' ? 'active' : ''} data-text="Tickets">Tickets</a></li>
-      <li><a href="/merch" class={currentPath === '/merch' ? 'active' : ''} data-text="Merch">Merch</a></li>
+      <li><a href="/" class={currentPath === '/' ? 'active' : ''}>Home</a></li>
+      <li><a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a></li>
+      <li><a href="/artists" class={currentPath === '/artists' ? 'active' : ''}>Artists</a></li>
+      <li><a href="/tickets" class={currentPath === '/tickets' ? 'active' : ''}>Tickets</a></li>
+      <li><a href="/merch" class={currentPath === '/merch' ? 'active' : ''}>Merch</a></li>
     </ul>
     <div class="nav-signup">
     <EmailCapture />
     </div>
     <div class="nav-email">
-      <a href="mailto:admin@1134.world" data-text="admin@1134.world">admin@1134.world</a>
+      <a href="mailto:admin@1134.world">admin@1134.world</a>
     </div>
   </div>
 </nav>
 
 <script>
   const nav = document.getElementById('bottom-nav');
+  const menuTrigger = document.getElementById('menu-trigger');
   let isVisible = false;
 
   function showNav() {
     if (isVisible) return;
     isVisible = true;
     nav?.classList.add('visible');
+    menuTrigger?.classList.add('hidden');
     document.body.style.overflow = 'hidden';
   }
 
@@ -45,8 +49,18 @@ const currentPath = Astro.url.pathname;
     if (!isVisible) return;
     isVisible = false;
     nav?.classList.remove('visible');
+    menuTrigger?.classList.remove('hidden');
     document.body.style.overflow = '';
   }
+
+  // Menu trigger button click
+  menuTrigger?.addEventListener('click', () => {
+    if (isVisible) {
+      hideNav();
+    } else {
+      showNav();
+    }
+  });
 
   // Glitchy clock with 1, 1, 3, 4 variations
   const glitchDigits = ['1', '1', '3', '4'];
@@ -162,6 +176,35 @@ const currentPath = Astro.url.pathname;
     top: 0;
   }
 
+  /* Menu trigger button */
+  .menu-trigger {
+    position: fixed;
+    bottom: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background: transparent;
+    border: none;
+    font-family: 'Helvetica', sans-serif;
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    opacity: var(--blur-opacity);
+    filter: var(--blur-filter);
+    transition: opacity var(--transition-fast);
+  }
+
+  .menu-trigger:hover {
+    opacity: var(--blur-opacity-hover);
+  }
+
+  .menu-trigger.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .nav-container {
     position: fixed;
     bottom: 0;
@@ -209,7 +252,6 @@ const currentPath = Astro.url.pathname;
     font-family: 'Helvetica Neue', Helvetica, sans-serif;
     font-weight: 700;
     font-size: 10rem;
-    letter-spacing: -0.02em;
     display: block;
     line-height: 0.85;
     mix-blend-mode: screen;
@@ -227,9 +269,9 @@ const currentPath = Astro.url.pathname;
     list-style: none;
     margin: 0;
     padding: 0;
-    opacity: 0.5;
-    font-family: 'Gossip-MedCrossStitch', serif;
-    text-transform: uppercase;
+    opacity: var(--blur-opacity);
+    font-family: 'Helvetica', sans-serif;
+    filter: var(--blur-filter);
   }
 
   .nav-links li {
@@ -242,41 +284,16 @@ const currentPath = Astro.url.pathname;
     text-decoration: none;
     font-size: 1.75rem;
     font-weight: var(--font-weight-normal);
-    letter-spacing: -0.02em;
-    transition: color var(--transition-fast);
+    transition: opacity var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    /* Gossip font + uppercase inherited from .nav-links - this sets the box size */
-  }
-
-  /* Hover state text - absolutely positioned so it doesn't affect layout */
-  .nav-links a::after {
-    content: attr(data-text);
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Helvetica', sans-serif;
-    text-transform: capitalize;
-    font-size: 1.75rem;
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-    pointer-events: none;
   }
 
   .nav-links a:hover,
+  .nav-email a:hover,
   .nav-links a.active {
-    color: transparent; /* Hide the Gossip text but keep its box size */
-  }
-
-  .nav-links a:hover::after,
-  .nav-links a.active::after {
-    opacity: 1; /* Show the Helvetica text */
+    opacity: var(--blur-opacity-hover);
   }
 
   .nav-signup {
@@ -285,48 +302,23 @@ const currentPath = Astro.url.pathname;
 
   /* Email link - same style as nav links */
   .nav-email {
-    opacity: 0.5;
-    font-family: 'Gossip-MedCrossStitch', serif;
-    text-transform: uppercase;
+    opacity: var(--blur-opacity);
+    font-family: 'Helvetica', sans-serif;
+    filter: var(--blur-filter);
   }
 
   .nav-email a {
     color: var(--color-text-primary);
     text-decoration: none;
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     font-weight: var(--font-weight-normal);
-    letter-spacing: -0.02em;
-    transition: color var(--transition-fast);
+    transition: opacity var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: relative;
   }
 
-  .nav-email a::after {
-    content: attr(data-text);
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Helvetica', sans-serif;
-    text-transform: lowercase;
-    font-size: 1.75rem;
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-    pointer-events: none;
-  }
 
-  .nav-email a:hover {
-    color: transparent;
-  }
-
-  .nav-email a:hover::after {
-    opacity: 1;
-  }
 
   /* Mobile responsive styles */
   @media (max-width: 768px) {
@@ -359,20 +351,12 @@ const currentPath = Astro.url.pathname;
       font-size: 1.3rem;
     }
 
-    .nav-links a::after {
-      font-size: 1.3rem;
-    }
-
     .nav-signup {
       width: 100%;
       max-width: 280px;
     }
 
     .nav-email a {
-      font-size: 1.3rem;
-    }
-
-    .nav-email a::after {
       font-size: 1.3rem;
     }
   }

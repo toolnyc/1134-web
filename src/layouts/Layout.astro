@@ -124,6 +124,12 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
 
     /* Border Radius */
     --border-radius: 0px;
+
+    /* Blur/Threshold Effect System */
+    --blur-amount: 0.8px;
+    --blur-filter: blur(var(--blur-amount)) url(#threshold);
+    --blur-opacity: 0.5;
+    --blur-opacity-hover: 0.66;
   }
 
   /* Hidden SVG for filters */
@@ -151,16 +157,19 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    letter-spacing: -0.01em;
   }
 
   html {
     font-family: var(--font-primary);
-    scroll-behavior: smooth;
+    height: 100vh;
+    overflow: hidden;
     overscroll-behavior: none;
   }
 
   body {
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background: var(--color-bg-primary);
     color: var(--color-text-primary);
     line-height: 1.7;
@@ -168,7 +177,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://1134.world');
     padding-bottom: var(--spacing-md);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.03em;
     font-weight: var(--font-weight-normal);
     transition: background-color 0.4s ease, color 0.4s ease;
     overscroll-behavior: none;

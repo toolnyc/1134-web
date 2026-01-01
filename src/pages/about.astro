@@ -29,8 +29,8 @@ import Layout from '../layouts/Layout.astro';
   .page-content {
     padding: var(--spacing-xl) var(--spacing-md);
     width: 100%;
-    letter-spacing: -0.05em;
-        filter: blur(0.75px);
+    opacity: var(--blur-opacity);
+    filter: var(--blur-filter);
 
   }
 
@@ -48,34 +48,32 @@ import Layout from '../layouts/Layout.astro';
 
   .about-text .lead {
     font-size: var(--text-2xl);
-    letter-spacing: 0.1em;
     margin-bottom: var(--spacing-sm);
   }
 
   .about-text p {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-family: var(--font-brand);
     font-family: var();
     color: var(--color-text-secondary);
-    line-height: 1.35;
+    line-height: 1;
   }
 
   @media (max-width: 768px) {
     .about-text p {
-      font-size: 2.25rem;
+      font-size: 2rem;
     }
   }
 
   .about-footer {
     margin-top: var(--spacing-sm);
     padding-top: var(--spacing-sm);
-    text-transform: uppercase;
+    text-transform: capitalize;
     opacity: 0.875;
   }
 
   .about-footer p {
     font-size: var(--text-sm);
     color: var(--color-text-tertiary);
-    letter-spacing: 0.05em;
   }
 </style>

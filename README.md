@@ -97,7 +97,7 @@ Visit `http://localhost:4321` to see your site.
 ### Typography
 
 - **Font**: Arial, sans-serif
-- **Kerning**: Tight letter-spacing (-0.05em to -0.1em)
+- **Kerning**: Tight letter-spacing (-0.01em)
 - Bold, condensed style
 
 ### Layout
